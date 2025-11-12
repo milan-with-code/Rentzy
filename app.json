@@ -2,6 +2,7 @@
   "expo": {
     "name": "Rentzy",
     "slug": "Rentzy",
+    "scheme": "rentzy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +26,17 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "62468572-7ed6-4545-9beb-1266cacc3189"
+      }
+    },
+    "owner": "milan_code_github"
   }
 }
