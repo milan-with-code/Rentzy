@@ -1,11 +1,15 @@
 // Fallback for using MaterialIcons on Android and web.
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
-type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
+type MaterialIconName = ComponentProps<typeof MaterialIcons>['name'];
+type FontAwesomeIconName = ComponentProps<typeof FontAwesome>['name'];
+type IoniconsIconName = ComponentProps<typeof Ionicons>['name'];
+type IconMapping = Record<string, MaterialIconName | FontAwesomeIconName | IoniconsIconName>;
 type IconSymbolName = keyof typeof MAPPING;
 
 /**
@@ -13,12 +17,20 @@ type IconSymbolName = keyof typeof MAPPING;
  * - see Material Icons in the [Icons Directory](https://icons.expo.fyi).
  * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
  */
-const MAPPING = {
+const MAPPING: IconMapping = {
   'house.fill': 'home',
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
-} as IconMapping;
+  'building-on': 'apartment',
+  'bed.double.fill': 'bed',
+  'plus.circle.fill': 'add-circle',
+  'person.3.fill': 'group',
+  'person.crop.circle.fill': 'account-circle',
+  'arrow.back': 'arrow-back',
+  'arrow.forward': 'arrow-forward',
+
+};
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
@@ -35,7 +47,6 @@ export function IconSymbol({
   size?: number;
   color: string | OpaqueColorValue;
   style?: StyleProp<TextStyle>;
-  weight?: SymbolWeight;
 }) {
   return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
 }
