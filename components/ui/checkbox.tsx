@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     View,
     Pressable,
@@ -13,8 +13,8 @@ import { Colors, Fonts } from '@/constants/theme';
 
 type Props = {
     label?: string;
-    checked?: boolean;
-    onChange?: (checked: boolean) => void;
+    checked: boolean;
+    onChange?: (value: boolean) => void;
     size?: number;
     color?: string;
     containerStyle?: ViewStyle;
@@ -25,7 +25,7 @@ type Props = {
 
 export default function Checkbox({
     label,
-    checked: checkedProp = false,
+    checked,
     onChange,
     size = 22,
     color = '#1D61E7',
@@ -34,18 +34,10 @@ export default function Checkbox({
     rounded = 6,
     disabled = false,
 }: Props) {
-    const [checked, setChecked] = useState(checkedProp);
-
-    const handlePress = () => {
-        if (disabled) return;
-        const newVal = !checked;
-        setChecked(newVal);
-        onChange && onChange(newVal);
-    };
 
     return (
         <Pressable
-            onPress={handlePress}
+            onPress={() => onChange?.(!checked)}
             style={[styles.wrapper, containerStyle]}
             disabled={disabled}
         >
@@ -55,7 +47,12 @@ export default function Checkbox({
                     {
                         width: size,
                         height: size,
-                        borderRadius: typeof rounded === 'boolean' ? (rounded ? 999 : 4) : rounded,
+                        borderRadius:
+                            typeof rounded === 'boolean'
+                                ? rounded
+                                    ? 999
+                                    : 4
+                                : rounded,
                         borderColor: checked ? color : '#cbd5e1',
                         backgroundColor: checked ? color : '#fff',
                         opacity: disabled ? 0.6 : 1,

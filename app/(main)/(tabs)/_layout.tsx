@@ -1,6 +1,6 @@
-import { Tabs } from 'expo-router';
 import React, { useMemo } from 'react';
-import { HapticTab } from '@/components/haptic-tab';
+import { StyleSheet } from 'react-native';
+import { Tabs } from 'expo-router';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
@@ -17,24 +17,37 @@ export default function TabLayout() {
     [colorScheme]
   );
 
-  return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: tintColor,
-        tabBarInactiveTintColor: inactiveColor,
-        tabBarButton: HapticTab,
-        tabBarLabelStyle: {
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        tabBarLabel: {
           fontSize: 12,
           fontFamily: 'Poppins_500Medium',
         },
-        tabBarStyle: {
+        tabBar: {
           backgroundColor: Colors[colorScheme ?? 'light'].background,
           height: 60,
           paddingBottom: 6,
           borderTopWidth: 0,
           elevation: 10,
         },
+        hiddenTabBar: {
+          display: 'none',
+        },
+      }),
+    [colorScheme]
+  );
+
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: tintColor,
+        tabBarInactiveTintColor: inactiveColor,
+
+
+        tabBarLabelStyle: styles.tabBarLabel,
+        tabBarStyle: styles.tabBar,
         lazy: false,
       }}
     >
@@ -51,7 +64,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="room"
         options={{
-          title: 'Rooms',
+          title: 'Room',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={26} name="building-on" color={color} />
           ),
@@ -61,7 +74,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="add-resident"
         options={{
-          title: 'Add',
+          title: 'Add Resident',
+          tabBarStyle: styles.hiddenTabBar,
           tabBarIcon: ({ color }) => (
             <IconSymbol size={26} name="plus.circle.fill" color={color} />
           ),

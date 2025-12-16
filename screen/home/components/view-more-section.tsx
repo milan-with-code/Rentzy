@@ -1,19 +1,15 @@
 import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { Colors, Fonts } from "@/constants/theme";
 import { viewMoreSectionData } from "@/mock";
 import { ViewMoreSectionDataProps } from "@/types/common";
+import { formatTitle } from "@/utils";
 
 export default function ViewMoreSection() {
     const { width } = Dimensions.get("screen");
 
-    const formatTitle = (text: string) => {
-        const words = text.split(" ");
-        return words.join("\n");
-    };
-
     const renderItemElement = ({ item }: { item: ViewMoreSectionDataProps }) => (
-        <Pressable style={[styles.itemContainer, { width: (width - 32) / 4 }]}>
+        <Pressable onPress={() => router.push(item.path)} style={[styles.itemContainer, { width: (width - 32) / 4 }]}>
             <View style={styles.iconBox}>
                 <Text style={styles.iconLetter}>{item.title.charAt(0)}</Text>
             </View>
