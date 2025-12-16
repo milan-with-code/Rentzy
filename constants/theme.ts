@@ -25,6 +25,7 @@ export const Colors = {
         tabIconDefault: '#9BA1A6',
         tabIconSelected: tintColorDark,
     },
+    primary: "#1D61E7",
     athensGray: "#F5F6F9",
     waterloo: "#7D7D91",
     portGore: "#232447",

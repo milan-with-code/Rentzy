@@ -1,14 +1,36 @@
 import { StyleSheet, Text, View } from "react-native";
+import { Link } from "expo-router";
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { Fonts } from "@/constants/theme";
+import { useEffect } from "react";
+import { usePropertyStore } from "@/store/usePropertyStore";
+
+const NOTIFICATION_COUNT = 3;
 
 export default function Header() {
+    const { property, loading, fetchProperty } = usePropertyStore();
+    useEffect(() => { fetchProperty() }, [])
+
     return (
         <View style={styles.headerContainer}>
-            <Text style={styles.headerTitle}>Patel PG</Text>
+            <Text style={styles.headerTitle}>{property?.propertyName}</Text>
+
             <View style={styles.iconRow}>
-                <Ionicons name="notifications-outline" size={22} color="white" />
-                <Feather name="user" size={22} color="white" />
+
+                <View style={{ position: "relative" }}>
+                    <Ionicons name="notifications-outline" size={22} color="white" />
+
+                    {NOTIFICATION_COUNT > 0 && (
+                        <View style={styles.badgeContainer}>
+                            <Text style={styles.badgeText}>
+                                {NOTIFICATION_COUNT}
+                            </Text>
+                        </View>
+                    )}
+                </View>
+                <Link href="/(main)/profile">
+                    <Feather name="user" size={22} color="white" />
+                </Link>
             </View>
         </View>
     );
@@ -38,14 +60,23 @@ const styles = StyleSheet.create({
         gap: 16,
     },
 
-    item: {
-        paddingVertical: 12,
-        paddingHorizontal: 15,
+    badgeContainer: {
+        position: "absolute",
+        top: -4,
+        right: -6,
+        backgroundColor: "red",
+        minWidth: 16,
+        height: 16,
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 3,
     },
 
-    itemText: {
-        fontSize: 12,
-        fontFamily: Fonts.serif,
-        color: "#313144",
+    badgeText: {
+        color: "white",
+        fontSize: 10,
+        fontFamily: Fonts.sans,
+        lineHeight: 12
     },
 });

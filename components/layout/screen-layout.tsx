@@ -1,13 +1,22 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import { useRouter } from "expo-router";
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
+import { router } from "expo-router";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Fonts } from "@/constants/theme";
+import { ReactNode } from "react";
 
 interface ScreenLayoutProps {
     title: string;
     children: React.ReactNode;
     showBack?: boolean;
     backgroundColor?: string;
+    containerStyle?: ViewStyle;
+    rightIcon?: {
+        name: string;
+        onPress: () => void;
+        color?: string;
+        size?: number;
+    };
+    headerBottom?: ReactNode;
 }
 
 export default function ScreenLayout({
@@ -15,11 +24,13 @@ export default function ScreenLayout({
     children,
     showBack = true,
     backgroundColor = "#1D61E7",
+    containerStyle,
+    rightIcon,
+    headerBottom,
 }: ScreenLayoutProps) {
-    const router = useRouter();
 
     return (
-        <View style={[styles.container, { backgroundColor }]}>
+        <View style={[styles.container, { backgroundColor }, containerStyle]}>
             <View style={styles.headerRow}>
                 {showBack && (
                     <TouchableOpacity onPress={() => router.back()} accessibilityRole="button">
@@ -28,15 +39,23 @@ export default function ScreenLayout({
                 )}
 
                 <Text style={styles.headerText}>{title}</Text>
+
+                {rightIcon && (
+                    <TouchableOpacity onPress={rightIcon.onPress} style={styles.rightIcon} activeOpacity={0.9}>
+                        <IconSymbol
+                            name={rightIcon.name}
+                            size={rightIcon.size || 24}
+                            color={rightIcon.color || "white"}
+                        />
+                    </TouchableOpacity>
+                )}
             </View>
 
-            <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.contentContainer}>{children}</View>
-            </ScrollView>
+            {headerBottom && <View style={styles.headerBottom}>{headerBottom}</View>}
+
+            <View style={styles.contentContainer}>
+                {children}
+            </View>
         </View>
     );
 }
@@ -50,12 +69,20 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 15,
         marginTop: 50,
-        marginLeft: 16,
+        marginHorizontal: 16,
     },
     headerText: {
         fontFamily: Fonts.serif,
         color: "white",
         fontSize: 16,
+        flex: 1,
+    },
+    rightIcon: {
+        marginLeft: "auto",
+    },
+    headerBottom: {
+        marginTop: 10,
+        marginHorizontal: 16,
     },
     scrollView: {
         flex: 1,

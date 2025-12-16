@@ -1,29 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
     View,
     TextInput,
     Text,
     Pressable,
     StyleSheet,
-    ViewStyle,
-    TextStyle,
-    TextInputProps,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors, Fonts } from '@/constants/theme';
-import { ThemedText } from '../themed-text';
-
-type Props = TextInputProps & {
-    label?: string;
-    iconLeft?: keyof typeof Ionicons.glyphMap;
-    iconRight?: keyof typeof Ionicons.glyphMap;
-    secure?: boolean;
-    error?: string;
-    helperText?: string;
-    containerStyle?: ViewStyle;
-    inputStyle?: TextStyle;
-    onRightIconPress?: () => void;
-};
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors, Fonts } from "@/constants/theme";
+import { ThemedText } from "../themed-text";
+import { InputProps } from "@/types/tag";
 
 export default function Input({
     label,
@@ -35,15 +21,15 @@ export default function Input({
     containerStyle,
     inputStyle,
     onRightIconPress,
+    variant = "default",
+    value,
+    onChangeText,
     ...props
-}: Props) {
+}: InputProps) {
     const [isFocused, setIsFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(!secure);
 
-    const handleFocus = () => setIsFocused(true);
-    const handleBlur = () => setIsFocused(false);
-
-    const toggleSecure = () => setShowPassword(prev => !prev);
+    const showClear = variant === "search" && !!value;
 
     return (
         <View style={[styles.container, containerStyle]}>
@@ -53,50 +39,70 @@ export default function Input({
                 style={[
                     styles.inputWrapper,
                     {
-
                         borderColor: error
-                            ? '#ef4444'
+                            ? "#ef4444"
                             : isFocused
-                                ? '#1D61E7'
+                                ? "#1D61E7"
                                 : Colors.athensGrayLight,
                     },
                 ]}
             >
-                {iconLeft && (
+                {(iconLeft || variant === "search") && (
                     <Ionicons
-                        name={iconLeft}
+                        name={iconLeft ?? "search-outline"}
                         size={20}
-                        color={isFocused ? '#1D61E7' : '#9ca3af'}
+                        color={isFocused ? "#1D61E7" : "#9ca3af"}
                         style={styles.iconLeft}
                     />
                 )}
 
                 <TextInput
                     {...props}
+                    value={value}
+                    onChangeText={onChangeText}
                     style={[
                         styles.input,
                         inputStyle,
-                        { paddingLeft: iconLeft ? 36 : 14, paddingRight: secure || iconRight ? 36 : 14 },
+                        {
+                            paddingLeft: iconLeft || variant === "search" ? 36 : 14,
+                            paddingRight: secure || iconRight || showClear ? 36 : 14,
+                        },
                     ]}
                     placeholderTextColor={Colors.nevada}
                     secureTextEntry={!showPassword && secure}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
                 />
 
                 {secure && (
-                    <Pressable onPress={toggleSecure} style={styles.iconRight}>
+                    <Pressable
+                        onPress={() => setShowPassword(prev => !prev)}
+                        style={styles.iconRight}
+                    >
                         <Ionicons
-                            name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                            name={showPassword ? "eye-outline" : "eye-off-outline"}
                             size={20}
                             color="#9ca3af"
                         />
                     </Pressable>
                 )}
 
-                {!secure && iconRight && (
+                {showClear && (
+                    <Pressable
+                        onPress={() => onChangeText?.("")}
+                        style={styles.iconRight}
+                    >
+                        <Ionicons name="close-circle" size={18} color="#9ca3af" />
+                    </Pressable>
+                )}
+
+                {!secure && !showClear && iconRight && (
                     <Pressable onPress={onRightIconPress} style={styles.iconRight}>
-                        <Ionicons name={iconRight} size={20} color={isFocused ? '#1D61E7' : '#9ca3af'} />
+                        <Ionicons
+                            name={iconRight}
+                            size={20}
+                            color={isFocused ? "#1D61E7" : "#9ca3af"}
+                        />
                     </Pressable>
                 )}
             </View>
@@ -112,7 +118,7 @@ export default function Input({
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
+        width: "100%",
         marginBottom: 16,
     },
     label: {
@@ -121,38 +127,36 @@ const styles = StyleSheet.create({
         marginBottom: 3,
         fontSize: 12,
         lineHeight: 19,
-        letterSpacing: -0.24,
     },
     inputWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         borderWidth: 1.2,
         borderRadius: 10,
-        backgroundColor: '#fff',
+        backgroundColor: "#fff",
     },
     input: {
         flex: 1,
         fontSize: 14,
-        letterSpacing: -0.01 * 14,
         color: Colors.shark,
         height: 46,
         fontFamily: Fonts.sans,
     },
     iconLeft: {
-        position: 'absolute',
+        position: "absolute",
         left: 10,
     },
     iconRight: {
-        position: 'absolute',
+        position: "absolute",
         right: 10,
     },
     errorText: {
-        color: '#ef4444',
+        color: "#ef4444",
         fontSize: 12,
         marginTop: 4,
     },
     helperText: {
-        color: '#6b7280',
+        color: "#6b7280",
         fontSize: 12,
         marginTop: 4,
     },

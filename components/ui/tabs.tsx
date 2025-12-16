@@ -2,7 +2,6 @@ import { Colors, Fonts } from '@/constants/theme';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
-    Text,
     Pressable,
     StyleSheet,
     Animated,
@@ -12,19 +11,17 @@ import {
 } from 'react-native';
 import { ThemedText } from '../themed-text';
 
-type Tab = { key: string; title: string };
-
-
 type Props = {
-    tabs: Tab[];
+    tabs: any[];
     activeIndex?: number;
     onChange?: (index: number) => void;
     containerStyle?: ViewStyle;
     tabTextStyle?: TextStyle;
     activeTextStyle?: TextStyle;
+
+    showCount?: boolean;
+    counts?: number[];
 };
-
-
 
 export default function Tabs({
     tabs,
@@ -33,6 +30,8 @@ export default function Tabs({
     containerStyle,
     tabTextStyle,
     activeTextStyle,
+    showCount = false,
+    counts = [],
 }: Props) {
     const [layoutWidths, setLayoutWidths] = useState<number[]>([]);
     const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -40,6 +39,7 @@ export default function Tabs({
 
     const indicatorX = useRef(new Animated.Value(0)).current;
     const indicatorWidth = useRef(new Animated.Value(0)).current;
+
 
 
     useEffect(() => {
@@ -50,7 +50,6 @@ export default function Tabs({
         setActiveIndex(activeIndexProp);
     }, [activeIndexProp]);
 
-
     function onTabLayout(index: number, e: LayoutChangeEvent) {
         const w = e.nativeEvent.layout.width;
         setLayoutWidths(prev => {
@@ -60,7 +59,6 @@ export default function Tabs({
         });
     }
 
-
     function onContainerLayout(e: LayoutChangeEvent) {
         setContainerWidth(e.nativeEvent.layout.width);
     }
@@ -68,17 +66,14 @@ export default function Tabs({
     function moveIndicator(index: number) {
         if (!layoutWidths || layoutWidths.length !== tabs.length) return;
 
-
         let offset = 0;
         for (let i = 0; i < index; i++) offset += layoutWidths[i] || 0;
         const w = layoutWidths[index] || 0;
-
 
         Animated.parallel([
             Animated.spring(indicatorX, {
                 toValue: offset,
                 useNativeDriver: false,
-                bounciness: 8,
             }),
             Animated.timing(indicatorWidth, {
                 toValue: w,
@@ -88,7 +83,6 @@ export default function Tabs({
         ]).start();
     }
 
-
     function handlePress(index: number) {
         setActiveIndex(index);
         onChange && onChange(index);
@@ -96,25 +90,21 @@ export default function Tabs({
 
     const defaultWidth = containerWidth && tabs.length ? containerWidth / tabs.length : 0;
 
+
     return (
-        <View
-            style={[styles.container, containerStyle]}
-            onLayout={onContainerLayout}
-        >
+        <View style={[styles.container, containerStyle]} onLayout={onContainerLayout}>
             <Animated.View
                 pointerEvents="none"
                 style={[
                     styles.indicator,
                     {
-                        backgroundColor: "white",
-                        width: layoutWidths.length === tabs.length ? indicatorWidth : defaultWidth,
-                        transform: [
-                            {
-                                translateX: indicatorX,
-                            },
-                        ],
+                        backgroundColor: 'white',
+                        width: defaultWidth,
+                        transform: [{ translateX: indicatorX }],
                         borderRadius: 6,
-                        margin: 2
+                        marginVertical: 2,
+                        marginLeft: activeIndex === tabs.length - 1 ? 0 : 2,
+                        marginRight: activeIndex === 0 ? 0 : 2,
                     },
                 ]}
             />
@@ -122,29 +112,49 @@ export default function Tabs({
             <View style={styles.row}>
                 {tabs.map((tab, i) => {
                     const isActive = i === activeIndex;
+                    const countValue = counts[i] ?? 0;
+
                     return (
                         <Pressable
-                            key={tab.key}
+                            key={i}
                             style={({ pressed }) => [
                                 styles.tab,
                                 { opacity: pressed ? 0.7 : 1 },
                             ]}
                             onPress={() => handlePress(i)}
                             onLayout={e => onTabLayout(i, e)}
-                            accessibilityRole="tab"
-                            accessibilityState={{ selected: isActive }}
-                            accessibilityLabel={tab.title}
                         >
+                            <View style={styles.tabInnerRow}>
+                                <ThemedText
+                                    style={[
+                                        styles.tabText,
+                                        tabTextStyle,
+                                        {
+                                            color: isActive ? Colors.portGore : Colors.waterloo,
+                                        },
+                                        isActive ? activeTextStyle : undefined,
+                                    ]}
+                                >
+                                    {tab}
+                                </ThemedText>
 
-                            <ThemedText
-                                style={[
-                                    styles.tabText,
-                                    tabTextStyle,
-                                    { color: isActive ? Colors.portGore : Colors.waterloo },
-                                    isActive ? activeTextStyle : undefined,
-                                ]}>
-                                {tab.title}
-                            </ThemedText>
+                                {showCount && (
+                                    <View
+                                        style={[
+                                            styles.countBadge,
+                                            {
+                                                backgroundColor: isActive
+                                                    ? Colors.athensGray
+                                                    : Colors.portGore,
+                                            },
+                                        ]}
+                                    >
+                                        <ThemedText style={styles.countText}>
+                                            {countValue}
+                                        </ThemedText>
+                                    </View>
+                                )}
+                            </View>
                         </Pressable>
                     );
                 })}
@@ -172,12 +182,31 @@ const styles = StyleSheet.create({
     tab: {
         flex: 1,
         paddingVertical: 10,
-        paddingHorizontal: 12,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    tabInnerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
     },
     tabText: {
         fontSize: 14,
         fontFamily: Fonts.serif,
+        lineHeight: 20
+    },
+
+    countBadge: {
+        minWidth: 20,
+        height: 20,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    countText: {
+        fontSize: 12,
+        color: 'white',
+        fontFamily: Fonts.serif,
+        lineHeight: 16,
     },
 });

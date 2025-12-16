@@ -2,18 +2,27 @@ import { FlatList, Text, View, StyleSheet } from "react-native";
 import { Fonts } from "@/constants/theme";
 import { reminderSectionData } from "@/mock";
 import { ReminderSectionDataProps } from "@/types/common";
+import * as LucideIcons from "lucide-react-native";
 
 export default function ReminderSection() {
-    const renderItem = ({ item }: { item: ReminderSectionDataProps }) => (
-        <View style={styles.card}>
-            <View style={styles.iconContainer}>
-                <Text style={styles.iconText}>Icon</Text>
-            </View>
-            <Text style={styles.amountText}>₹ {item.amount}</Text>
-            <Text style={styles.iconText}>{item.title}</Text>
-        </View>
-    );
+    const renderItem = ({ item }: { item: ReminderSectionDataProps }) => {
+        const IconComponent = LucideIcons[item.icon as keyof typeof LucideIcons] as React.ComponentType<any>;
 
+        return (
+            <View style={styles.card}>
+                <View style={styles.iconContainer}>
+                    {IconComponent ? (
+                        <IconComponent size={20} color="white" />
+                    ) : (
+                        <Text style={styles.iconText}>?</Text>
+                    )}
+                </View>
+
+                <Text style={styles.amountText}>₹ {item.amount}</Text>
+                <Text style={styles.iconText}>{item.title}</Text>
+            </View>
+        );
+    };
     return (
         <View style={styles.container}>
             <FlatList

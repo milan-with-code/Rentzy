@@ -1,21 +1,65 @@
-import { ReminderSectionDataProps, ViewMoreSectionDataProps } from "@/types/common";
+import { QuickActionsDataProps, ReminderSectionDataProps, ViewMoreSectionDataProps } from "@/types/common";
+import { RoomAmenities } from "@/types/room";
 
 export const viewMoreSectionData: ViewMoreSectionDataProps[] = [
-    { id: 1, title: "Add Resident" },
-    { id: 2, title: "Add Payments" },
-    { id: 3, title: "Add Expense" },
-    { id: 4, title: "Upcoming Dues" },
-    { id: 5, title: "Add Staff" },
-    { id: 6, title: "Complaints" },
-    { id: 7, title: "Enquiries" },
-    { id: 8, title: "Reports" },
+    { id: 1, title: "Add Resident", path: "/(tabs)/add-resident" },
+    { id: 2, title: "Add Payments", path: "/(extra)/add-payments" },
+    { id: 3, title: "Add Expense", path: "/(extra)/add-expenses" },
+    { id: 4, title: "Upcoming Dues", path: "/(extra)/upcoming-dues" }
 ];
-
 
 export const reminderSectionData: ReminderSectionDataProps[] = [
-    { id: 1, amount: 0, title: "Total Collection (MTD)" },
-    { id: 2, amount: 0, title: "Dues till Date" },
-    { id: 3, amount: 0, title: "November Dues" },
-    { id: 4, amount: 0, title: "Total FTD Collection" },
-    { id: 5, amount: 0, title: "Room Revenue" },
+    {
+        id: 1,
+        title: "Rent Due",
+        amount: 2500,
+        icon: "Wallet",
+    },
+    {
+        id: 2,
+        title: "Electricity Bill",
+        amount: 460,
+        icon: "Zap",
+    },
+    {
+        id: 3,
+        title: "Water Bill",
+        amount: 300,
+        icon: "Droplet",
+    },
 ];
+
+
+export const quickActionsData: QuickActionsDataProps[] = [
+    { id: 1, title: "Add Broker", icon: "user.plus.fill" },
+    { id: 2, title: "E-Sign Agreement", icon: "house.fill" },
+    { id: 3, title: "E-Sign Inventory", icon: "inventory-material" },
+    { id: 4, title: "Food Calender", icon: "storefront" },
+];
+
+
+
+export const AMENITIES = [
+    "AC",
+    "RO Water",
+    "Bed",
+    "Geyser",
+    "Fan",
+    "Cupboard",
+    "Wi-Fi",
+    "Parking",
+];
+
+
+export const roomAmenities: RoomAmenities = {
+    common: [
+        { id: 1, key: "balcony", label: "Balcony" },
+        { id: 2, key: "attach", label: "Attached Bathroom" },
+    ],
+    optional: [
+        { id: 4, key: "ac", label: "AC" },
+        { id: 5, key: "tv", label: "TV" },
+        { id: 6, key: "parking", label: "Parking" },
+        { id: 7, key: "wifi", label: "Wi-Fi" },
+    ],
+};

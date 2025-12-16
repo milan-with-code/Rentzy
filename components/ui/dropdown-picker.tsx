@@ -1,7 +1,6 @@
 import { Fonts } from "@/constants/theme";
 import React, { useEffect } from "react";
 import {
-    TouchableOpacity,
     Text,
     FlatList,
     StyleSheet,
@@ -107,6 +106,7 @@ const DropdownPicker = <T extends DropdownItem>({
                         keyExtractor={(item) => String(item.id)}
                         showsVerticalScrollIndicator={true}
                         keyboardShouldPersistTaps="handled"
+                        scrollEnabled={false}
                         ListEmptyComponent={
                             <Text style={styles.empty}>No items available</Text>
                         }
@@ -122,31 +122,42 @@ const styles = StyleSheet.create({
         position: "relative",
         zIndex: 10,
     },
+
     trigger: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         paddingHorizontal: 15,
-        backgroundColor: "#fff",
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 8,
         paddingVertical: 12,
+        backgroundColor: "#fff",
+        borderWidth: 1,
+        borderColor: "#D1D1D1",
+
+        borderRadius: 8,
+
     },
+
     triggerText: {
         fontSize: 12,
         fontFamily: Fonts.serif,
         color: "#313144",
         lineHeight: 18,
     },
+
     dropdown: {
         position: "absolute",
         top: 46,
         left: 0,
         right: 0,
+        backgroundColor: "#fff",
+
+        borderWidth: 1,
+        borderColor: "#D1D1D1",
+
         borderBottomLeftRadius: 8,
         borderBottomRightRadius: 8,
-        backgroundColor: "#fff",
     },
+
     empty: {
         textAlign: "center",
         color: "#aaa",

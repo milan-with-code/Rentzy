@@ -1,9 +1,5 @@
-import { Text, View } from "react-native";
+import ResidentScreen from "@/screen/residents";
 
-export default function ResidentsScreen() {
-  return (
-    <View>
-      <Text>ResidentsScreen</Text>
-    </View>
-  )
+export default function ResidentsLayout() {
+  return <ResidentScreen />
 }

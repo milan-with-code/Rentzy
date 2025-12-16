@@ -1,9 +1,5 @@
-import { Text, View } from "react-native";
+import ForgotPasswordScreen from "@/screen/forgot-password";
 
-export default function ForgotPasswordPage() {
-    return (
-        <View>
-            <Text>Forgot Password Page</Text>
-        </View>
-    );
+export default function ForgotPasswordLayout() {
+    return <ForgotPasswordScreen />
 }
