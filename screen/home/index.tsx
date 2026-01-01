@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { ScrollView, View, StyleSheet, RefreshControl, } from "react-native";
+import { ScrollView, View, StyleSheet, } from "react-native";
 import { useFocusEffect } from "expo-router";
 import Header from "./components/header";
 import ReminderSection from "./components/reminder-section";
@@ -9,11 +9,9 @@ import VacantBedCard from "./components/vacant-bed-card";
 import VacantBedModal from "@/components/modals/vacant-bed-modal";
 import VacantBedCardSkeleton from "@/skeleton/vacant-bed-card-skeleton";
 import { useBedStore } from "@/store/useBedStore";
-import { Colors } from "@/constants/theme";
 
 export default function HomeScreen() {
     const [showVacantModal, setShowVacantModal] = useState(false);
-    const [refreshing, setRefreshing] = useState(false);
 
     const { beds, total, loading, fetchVacantBeds, reset } = useBedStore();
 
@@ -24,11 +22,6 @@ export default function HomeScreen() {
         }, [])
     );
 
-    const onRefresh = useCallback(async () => {
-        setRefreshing(true);
-        await fetchVacantBeds();
-        setRefreshing(false);
-    }, []);
 
     const handleOnPress = useCallback(() => {
         setShowVacantModal(true);
@@ -41,20 +34,14 @@ export default function HomeScreen() {
     return (
         <View style={styles.container}>
             <Header />
-            <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                        tintColor={Colors.primary}
-                    />
-                }
-            >
-                <ReminderSection />
-                <View style={styles.contentContainer}>
+
+            <ReminderSection />
+            <View style={styles.contentContainer}>
+                <ScrollView
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
                     {loading ? (
                         <VacantBedCardSkeleton />
                     ) : (
@@ -65,8 +52,8 @@ export default function HomeScreen() {
                     )}
                     <ViewMoreSection />
                     <RentDueSection />
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </View>
             <VacantBedModal
                 visible={showVacantModal}
                 onClose={handleCloseModal}

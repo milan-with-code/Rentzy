@@ -62,6 +62,12 @@ export interface FormType {
     bed: string;
     rentAmount: string;
     meterReading: string;
+    pinCode: string;
+    agreementPeriod: number | null;
+    registrationDate: string;
+    accommodationDate: string;
+    paymentStartDate: string;
+    aadhaarNumber?: string;
 }
 
 export interface StepProps {

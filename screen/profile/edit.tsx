@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import ScreenLayout from "@/components/layout/screen-layout";
 import Button from "@/components/ui/button";
 import InputField from "@/components/ui/input-field";
 import UploadCard from "@/components/ui/upload-card";
+import { useUserStore } from "@/store/useUserStore";
 
 export default function EditProfileScreen() {
+    const { user, updateMyProfile } = useUserStore();
     const [pgName, setPgName] = useState("");
     const [contact1, setContact1] = useState("");
     const [address, setAddress] = useState("");
@@ -17,6 +19,13 @@ export default function EditProfileScreen() {
     const [logoImage, setLogoImage] = useState<string | null>(null);
     const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
     const [signatureImage, setSignatureImage] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!user?.property) return;
+        setPgName(user.property.propertyName ?? "");
+        setContact1(user.phone ?? "");
+        setAddress(user.property.address ?? "");
+    }, [user]);
 
     const handleCancel = () => {
         setPgName("");
@@ -30,11 +39,32 @@ export default function EditProfileScreen() {
         router.back();
     };
 
-    return (
-        <>
-            <ScreenLayout title="Edit Profile" >
-                <View style={styles.formWrapper}>
+    const handleUpdateProfile = async () => {
+        const response = await updateMyProfile({
+            phone: contact1,
+            address,
+            pgName,
+            gstin,
+            expiry,
+            upiName,
+            upiId, logoImage,
+            qrCodeImage,
+            signatureImage,
+        });
+        if (response) {
+            Alert.alert("Success", "Profile updated successfully");
+            router.back();
+        } else {
+            Alert.alert("Error", "Failed to update profile");
+        }
+    }
 
+    return (
+        <ScreenLayout title="Edit Profile">
+            <ScrollView style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}>
+                <View style={styles.formWrapper}>
                     <View style={styles.row}>
                         <InputField
                             label="PG Name"
@@ -114,23 +144,28 @@ export default function EditProfileScreen() {
                     </View>
 
                 </View>
-            </ScreenLayout>
-
+            </ScrollView>
             <View style={styles.bottomActions}>
                 <View style={styles.col}>
                     <Button title="Cancel" variant="secondary" onPress={handleCancel} />
                 </View>
                 <View style={styles.col}>
-                    <Button title="Update" />
+                    <Button title="Update" onPress={handleUpdateProfile} />
                 </View>
             </View>
-        </>
+        </ScreenLayout>
     );
 }
 
 const styles = StyleSheet.create({
     formWrapper: {
         marginBottom: 82,
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
     },
     row: {
         flexDirection: "row",
@@ -141,13 +176,12 @@ const styles = StyleSheet.create({
     },
     bottomActions: {
         position: "absolute",
-        bottom: 0,
+        bottom: 20,
         left: 16,
         right: 16,
         backgroundColor: "white",
         flexDirection: "row",
         gap: 12,
-        paddingTop: 16,
-        paddingBottom: 32,
+        paddingTop: 20,
     },
 });

@@ -13,6 +13,10 @@ export default function AddResidentScreen() {
     const [verifyWithOtp, setVerifyWithOtp] = useState(false);
     const [withoutAadhaar, setWithoutAadhaar] = useState(false);
 
+    const isSkipDisabled =
+        (!withoutAadhaar && aadhaar.length !== 12) ||
+        (verifyWithOtp && aadhaar.length === 12 && otp.length !== 6);
+
     return (
         <ScreenLayout title="Add Resident">
             <View style={styles.container}>
@@ -72,6 +76,7 @@ export default function AddResidentScreen() {
                             title="Skip"
                             onPress={() => router.push("/(main)/new-registration")}
                             fullWidth
+                            disabled={isSkipDisabled}
                         />
                     </View>
                 </View>
@@ -104,7 +109,6 @@ const styles = StyleSheet.create({
     bottomRow: {
         flexDirection: "row",
         gap: 12,
-        marginBottom: 20,
     },
     flex: {
         flex: 1,

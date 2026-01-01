@@ -1,5 +1,7 @@
+import { User } from "@/types/user";
 import API from "./axios";
 
 export const userService = {
-    getUsers: () => API.get("/auth/me"),
+    getMyProfile: () => API.get("/auth/me"),
+    updateMyProfile: (payload: Partial<User>) => API.put("/auth/me", payload),
 };

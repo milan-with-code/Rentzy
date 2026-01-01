@@ -2,10 +2,10 @@ import { Alert } from "react-native";
 import { AxiosError } from "axios";
 import { create } from "zustand";
 import { propertyService } from "@/api/property.service";
-import { PropertyData } from "@/types/property";
+import { Property } from "@/types/property";
 
 interface PropertyStore {
-    property: PropertyData | null;
+    property: Property | null;
     loading: boolean;
     error: string | null;
     fetchProperty: () => Promise<void>;

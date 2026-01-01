@@ -1,17 +1,25 @@
-import { useContext, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
 import ScreenLayout from "@/components/layout/screen-layout";
 import ProfileHeader from "./components/profile-header";
 import ConfirmModal from "@/components/ui/confirm-modal";
 import Button from "@/components/ui/button";
 import { AuthContext } from "@/context/auth-context";
-import { usePropertyStore } from "@/store/usePropertyStore";
 import ProfileHeaderSkeleton from "@/skeleton/profile-header-skeleton";
+import { useUserStore } from "@/store/useUserStore";
+import { formatIndianPhone } from "@/utils";
+import { useFocusEffect } from "expo-router";
 
 export default function ProfileScreen() {
     const [showLogout, setShowLogout] = useState(false);
     const { setAuthToken } = useContext(AuthContext)
-    const { property, loading, fetchProperty } = usePropertyStore();
+    const { user, loading, fetchMyProfile } = useUserStore();
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchMyProfile();
+        }, [])
+    );
 
     const handleLogout = () => {
         setShowLogout(false);
@@ -20,40 +28,44 @@ export default function ProfileScreen() {
 
     return (
         <ScreenLayout title="Profile">
-            <View style={styles.container}>
-                <View style={styles.content}>
-                    {loading ? (
-                        <ProfileHeaderSkeleton />
-                    ) : (
-                        <ProfileHeader
-                            name={property?.propertyName ?? ""}
-                            email={property?.email ?? ""}
-                            phone={"+91 8200349568"}
-                            avatarName={property?.ownerName ?? ""}
+            <ScrollView style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}>
+                <View style={styles.container}>
+                    <View style={styles.content}>
+                        {loading ? (
+                            <ProfileHeaderSkeleton />
+                        ) : (
+                            <ProfileHeader
+                                name={user?.property?.propertyName ?? ""}
+                                email={user?.email ?? ""}
+                                phone={formatIndianPhone(user?.phone ?? "")}
+                                avatarName={user?.name ?? ""}
+                            />
+                        )}
+
+                    </View>
+
+                    <View style={styles.bottom}>
+                        <Button
+                            title="Logout"
+                            variant="outline"
+                            onPress={() => setShowLogout(true)}
+                            fullWidth
                         />
-                    )}
+                    </View>
 
-                </View>
-
-                <View style={styles.bottom}>
-                    <Button
+                    <ConfirmModal
+                        visible={showLogout}
                         title="Logout"
-                        variant="outline"
-                        onPress={() => setShowLogout(true)}
-                        fullWidth
+                        message="Are you sure you want to logout?"
+                        confirmText="Logout"
+                        cancelText="Cancel"
+                        onConfirm={handleLogout}
+                        onCancel={() => setShowLogout(false)}
                     />
                 </View>
-
-                <ConfirmModal
-                    visible={showLogout}
-                    title="Logout"
-                    message="Are you sure you want to logout?"
-                    confirmText="Logout"
-                    cancelText="Cancel"
-                    onConfirm={handleLogout}
-                    onCancel={() => setShowLogout(false)}
-                />
-            </View>
+            </ScrollView>
         </ScreenLayout>
     );
 }
@@ -68,5 +80,11 @@ const styles = StyleSheet.create({
     },
     bottom: {
         marginBottom: 16,
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
     },
 });
