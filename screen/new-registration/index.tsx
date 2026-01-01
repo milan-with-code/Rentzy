@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { FormType } from "@/types/common";
 import ScreenLayout from "@/components/layout/screen-layout";
@@ -49,6 +49,12 @@ export default function NewRegistrationScreen() {
         bed: "",
         rentAmount: "",
         meterReading: "",
+        pinCode: "",
+        agreementPeriod: null,
+        registrationDate: "",
+        accommodationDate: "",
+        paymentStartDate: "",
+        aadhaarNumber: "",
     });
 
     const handleChange = <K extends keyof FormType>(key: K, value: FormType[K]) =>
@@ -97,16 +103,21 @@ export default function NewRegistrationScreen() {
                     />
                 }
             >
-                <View style={{ flex: 1, justifyContent: "space-between" }}>
+                <ScrollView style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}>
                     <ActiveStep form={form} handleChange={handleChange} />
-
-                    <View style={styles.buttonRow}>
+                </ScrollView>
+                <View style={styles.buttonRow}>
+                    <View style={styles.col}>
                         <Button
                             title="Back"
                             variant="secondary"
                             onPress={handleBack}
                             style={styles.button}
                         />
+                    </View>
+                    <View style={styles.col}>
                         <Button
                             title={isLastStep ? "Submit" : "Next"}
                             onPress={handleNext}
@@ -126,12 +137,29 @@ export default function NewRegistrationScreen() {
 }
 
 const styles = StyleSheet.create({
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
+        paddingBottom: 50,
+    },
     buttonRow: {
         flexDirection: "row",
-        marginBottom: 20,
         gap: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        backgroundColor: "white",
+
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
     },
     button: {
+        flex: 1,
+    },
+    col: {
         flex: 1,
     },
 });

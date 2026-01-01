@@ -8,8 +8,17 @@ import { Fonts } from "@/constants/theme";
 import { StepProps } from "@/types/common";
 
 export default function StepOne({ form, handleChange }: StepProps) {
-    const [isOpenDropdown, setIsOpenDropdown] = useState(false);
+    const [isProfessionOpen, setIsProfessionOpen] = useState(false);
+    const [isAgreementOpen, setIsAgreementOpen] = useState(false);
 
+
+    // ------------------ DEFAULT DATE ------------------
+    const today = useMemo(() => {
+        const d = new Date();
+        return d.toISOString().split("T")[0]; // YYYY-MM-DD
+    }, []);
+
+    // ------------------ OPTIONS ------------------
     const professionOptions = useMemo(
         () => [
             { id: 1, label: "Student", value: "student" },
@@ -20,21 +29,27 @@ export default function StepOne({ form, handleChange }: StepProps) {
         []
     );
 
-    const renderElement = useCallback(
-        ({ item }: { item: any }) => {
+    const agreementOptions = useMemo(
+        () => [
+            { id: 1, label: "1 Month", value: 1 },
+            { id: 2, label: "2 Months", value: 2 },
+        ],
+        []
+    );
+
+    const renderProfessionItem = useCallback(
+        ({ item }: any) => {
             const isSelected = item.value === form.profession;
 
             return (
                 <TouchableOpacity
                     onPress={() => {
                         handleChange("profession", item.value);
-                        setIsOpenDropdown(false);
+                        setIsProfessionOpen(false);
                     }}
                     style={[
                         styles.dropdownItem,
-                        {
-                            backgroundColor: isSelected ? "#1D61E7" : "#fff",
-                        },
+                        { backgroundColor: isSelected ? "#1D61E7" : "#fff" },
                     ]}
                 >
                     <Text
@@ -51,6 +66,21 @@ export default function StepOne({ form, handleChange }: StepProps) {
         [form.profession]
     );
 
+    const renderAgreementItem = useCallback(
+        ({ item }: any) => (
+            <TouchableOpacity
+                onPress={() => {
+                    handleChange("agreementPeriod", item.value);
+                    setIsAgreementOpen(false);
+                }}
+                style={styles.dropdownItem}
+            >
+                <Text style={styles.dropdownItemText}>{item.label}</Text>
+            </TouchableOpacity>
+        ),
+        []
+    );
+
     return (
         <View>
             <View style={styles.center}>
@@ -58,7 +88,7 @@ export default function StepOne({ form, handleChange }: StepProps) {
                     value={form.uri}
                     onChange={(v) => handleChange("uri", v ?? "")}
                     size={96}
-                    name="Milan Patel"
+                    name={form.name || "Resident"}
                     allowCamera
                 />
                 <Text style={styles.uploadText}>Upload Image</Text>
@@ -85,7 +115,7 @@ export default function StepOne({ form, handleChange }: StepProps) {
                     label="Date of Birth"
                     value={form.dob}
                     onChangeText={(t) => handleChange("dob", t)}
-                    placeholder="DD/MM/YYYY"
+                    placeholder="YYYY-MM-DD"
                     containerStyle={styles.col}
                 />
             </View>
@@ -151,7 +181,7 @@ export default function StepOne({ form, handleChange }: StepProps) {
                 />
 
                 <InputField
-                    label="Institution Name"
+                    label="Institution / Company"
                     value={form.institution}
                     onChangeText={(t) => handleChange("institution", t)}
                     placeholder="Enter institution or company"
@@ -163,6 +193,9 @@ export default function StepOne({ form, handleChange }: StepProps) {
                 selected={
                     form.profession
                         ? {
+                            id: professionOptions.find(
+                                (opt) => opt.value === form.profession
+                            )?.id || 1,
                             label:
                                 form.profession.charAt(0).toUpperCase() +
                                 form.profession.slice(1),
@@ -170,12 +203,19 @@ export default function StepOne({ form, handleChange }: StepProps) {
                         }
                         : null
                 }
-                isOpen={isOpenDropdown}
-                setIsOpen={setIsOpenDropdown}
-                renderItem={renderElement}
+                isOpen={isProfessionOpen}
+                setIsOpen={setIsProfessionOpen}
+                renderItem={renderProfessionItem}
                 data={professionOptions}
                 placeholder="Select Profession"
                 containerStyle={{ marginBottom: 16 }}
+            />
+            <InputField
+                label="Aadhaar Number"
+                value={form.aadhaarNumber}
+                onChangeText={(t) => handleChange("aadhaarNumber", t)}
+                placeholder="Enter Aadhaar Number"
+                keyboardType="number-pad"
             />
 
             <InputField
@@ -184,13 +224,78 @@ export default function StepOne({ form, handleChange }: StepProps) {
                 onChangeText={(t) => handleChange("idNumber", t)}
                 placeholder="Enter ID Number"
             />
+
+            <InputField
+                label="Pin Code"
+                value={form.pinCode}
+                onChangeText={(t) => handleChange("pinCode", t)}
+                placeholder="Enter pin code"
+                keyboardType="number-pad"
+            />
+
+            <DropdownPicker
+                selected={
+                    form.agreementPeriod
+                        ? {
+                            id: form.agreementPeriod,
+                            label: `${form.agreementPeriod} Month`,
+                            value: form.agreementPeriod,
+                        }
+                        : null
+                }
+                isOpen={isAgreementOpen}
+                setIsOpen={setIsAgreementOpen}
+                renderItem={renderAgreementItem}
+                data={agreementOptions}
+                placeholder="Select Agreement Period"
+                containerStyle={{ marginBottom: 16 }}
+            />
+
+            <View style={styles.row}>
+                <InputField
+                    label="Registration Date"
+                    value={form.registrationDate || today}
+                    onChangeText={(t) =>
+                        handleChange("registrationDate", t)
+                    }
+                    placeholder="YYYY-MM-DD"
+                    containerStyle={styles.col}
+                />
+
+                <InputField
+                    label="Accommodation Date"
+                    value={form.accommodationDate || today}
+                    onChangeText={(t) =>
+                        handleChange("accommodationDate", t)
+                    }
+                    placeholder="YYYY-MM-DD"
+                    containerStyle={styles.col}
+                />
+            </View>
+
+            <InputField
+                label="Payment Start Date"
+                value={form.paymentStartDate || today}
+                onChangeText={(t) =>
+                    handleChange("paymentStartDate", t)
+                }
+                placeholder="YYYY-MM-DD"
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    center: { alignItems: "center", },
-    uploadText: { fontFamily: Fonts.sans, fontSize: 14 },
+    center: {
+        alignItems: "center",
+        marginBottom: 16,
+    },
+
+    uploadText: {
+        fontFamily: Fonts.sans,
+        fontSize: 14,
+        marginTop: 6,
+    },
 
     row: {
         flexDirection: "row",
@@ -198,7 +303,9 @@ const styles = StyleSheet.create({
         gap: 12,
     },
 
-    col: { flex: 1 },
+    col: {
+        flex: 1,
+    },
 
     maritalRow: {
         flexDirection: "row",
@@ -223,6 +330,6 @@ const styles = StyleSheet.create({
     dropdownItemText: {
         fontSize: 14,
         fontFamily: Fonts.sans,
-        lineHeight: 20
+        lineHeight: 20,
     },
 });

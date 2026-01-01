@@ -1,4 +1,4 @@
-export interface PropertyData {
+export interface Property {
     _id: string;
 
     propertyName: string;

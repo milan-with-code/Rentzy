@@ -1,11 +1,12 @@
 import { QuickActionsDataProps, ReminderSectionDataProps, ViewMoreSectionDataProps } from "@/types/common";
+import { CategoryOption } from "@/types/expenses";
 import { RoomAmenities } from "@/types/room";
 
 export const viewMoreSectionData: ViewMoreSectionDataProps[] = [
-    { id: 1, title: "Add Resident", path: "/(tabs)/add-resident" },
-    { id: 2, title: "Add Payments", path: "/(extra)/add-payments" },
-    { id: 3, title: "Add Expense", path: "/(extra)/add-expenses" },
-    { id: 4, title: "Upcoming Dues", path: "/(extra)/upcoming-dues" }
+    { id: 1, title: "Add Resident", path: "/add-resident" },
+    { id: 2, title: "Add Payments", path: "/add-payments" },
+    { id: 3, title: "Add Expense", path: "/expenses/expenses" },
+    { id: 4, title: "Upcoming Dues", path: "/upcoming-dues" }
 ];
 
 export const reminderSectionData: ReminderSectionDataProps[] = [
@@ -63,3 +64,14 @@ export const roomAmenities: RoomAmenities = {
         { id: 7, key: "wifi", label: "Wi-Fi" },
     ],
 };
+
+
+export const CATEGORY_OPTIONS: CategoryOption[] = [
+    { id: 1, label: "Bills", value: "Bills" },
+    { id: 2, label: "Food", value: "Food" },
+    { id: 3, label: "Maintenance", value: "Maintenance" },
+    { id: 4, label: "Marketing", value: "Marketing" },
+    { id: 5, label: "Miscellaneous", value: "Miscellaneous" },
+    { id: 6, label: "Petty Cash", value: "Petty Cash" },
+    { id: 7, label: "Salaries", value: "Salaries" },
+];

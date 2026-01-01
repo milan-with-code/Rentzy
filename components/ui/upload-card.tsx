@@ -1,18 +1,20 @@
+import { useMemo } from "react";
 import { View, Text, StyleSheet, Image, Pressable, ViewStyle } from "react-native";
 import { Fonts } from "@/constants/theme";
 import * as ImagePicker from "expo-image-picker";
+import { getValidImagePath } from "@/utils/convert";
+import { UploadFile } from "@/types/expenses";
 
 type UploadCardProps = {
     label: string;
     value?: string | null;
-    onChange: (uri: string) => void;
+    onChange: (value: UploadFile) => void;
     containerStyle?: ViewStyle;
 };
 
 export default function UploadCard({ label, value, onChange, containerStyle }: UploadCardProps) {
 
     const pickImage = async () => {
-
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permission.granted) {
             alert("Please allow gallery access to upload images.");
@@ -26,10 +28,20 @@ export default function UploadCard({ label, value, onChange, containerStyle }: U
             quality: 1,
         });
 
-        if (!result.canceled) {
-            onChange(result.assets[0].uri);
+        if (!result.canceled && result.assets?.length) {
+            const asset = result.assets[0];
+
+            onChange({
+                uri: asset.uri ?? "",
+                name: asset.fileName ?? "upload",
+                type: asset.mimeType ?? "image",
+            });
         }
     };
+
+    const imgValue = useMemo(() => {
+        return getValidImagePath(value);
+    }, [value])
 
     return (
         <View style={[styles.wrapper, containerStyle]}>
@@ -37,7 +49,7 @@ export default function UploadCard({ label, value, onChange, containerStyle }: U
 
             <Pressable style={styles.uploadBox} onPress={pickImage}>
                 {value ? (
-                    <Image source={{ uri: value }} style={styles.preview} />
+                    <Image source={{ uri: imgValue ?? "" }} style={styles.preview} />
                 ) : (
                     <Text style={styles.placeholder}>Tap to upload</Text>
                 )}
